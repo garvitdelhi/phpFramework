@@ -2,13 +2,7 @@
 $driver = new mysqli_driver();
 $driver->report_mode = MYSQLI_REPORT_STRICT;
 
-/**
- * Database management / access class: basic abstraction
- * 
- * @author Michael Peacock
- * @version 1.0
- */
-class Mysqldb {
+ss Mysqldb {
 	
 	/**
 	 * Allows multiple database connections
