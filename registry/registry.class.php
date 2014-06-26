@@ -1,10 +1,6 @@
 <?php
 require_once('storeException.class.php');
-/**
- * PHP Social Networking
- * @author Michael Peacock
- * Registry Class
- */
+
 class Registry {
 	
 	/**
