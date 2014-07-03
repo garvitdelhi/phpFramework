@@ -1,0 +1,129 @@
+// phpFramework Structure Information
+==============================================
+
+you directory after installation should look like :
+
+	Your Directory
+	├─┬ Docs
+	│ ├── gettingStarted.txt
+	│ ├── structure.txt
+	│ └┬─ api
+  	├─┬ controller
+  	│ ├─┬ home
+  	│ │ ├── controller.php
+  	│ │ └── index.php
+  	│ └── you own controllers
+  	├─┬ lib
+  	│ ├── pagination
+  	│ └── phpmail
+  	├── models
+  	├── registry
+  	├── views
+  	├── .htaccess
+  	├── LICENSE
+  	├── README.md
+  	├── db.cinf
+  	├── db.sql
+  	└── index.php
+
+
+  	You must not change its directory sequence.
+
+  	1. Docs
+  		This is the place you get all the information abut framework and api's knowledge.
+
+  	2. Controllers
+  		Your url erquests are handled by your controllers. Ex if you have a url as http://yousite.com/home or http://yousite.com/
+  		home controller will be called by the framework.
+  		ex. if your url is http://yousite.com/aboutUs then aboutUs controller is called so make sure youre controller names are
+  		descriptive enough as this is going to be use in url's.
+
+  		Forbidden controller names : Registry, accessControl, authenticate, errorlog, mail, Mysqldb, Page, passwordHash,
+  		storeException, template, urlprocessor, user.
+
+  		How controllers work : your name of the controller must be same a folder inside controller folder as you can see home folder
+  		inside controller folder. inside your controller name's folder you must have controller.php with class as  : 
+  		<controllername>Controller for ex home controller has controller.php and has class named homeController.
+  		It must have a contructor with parameter as registry.
+
+  		Demo Class : 
+
+  			<?php
+
+				class homeController {
+
+					private $registry;
+					private $controller = 'home';
+				
+					public function __construct($registry) {
+						$this->registry = $registry;
+					}
+				}
+
+			?>
+
+		No function of this controller is called by framework you have to call all the functions of this controller in your
+		constructor.
+
+		I hope you are familier with controllers now.
+
+	3. lib 
+		This folder contains all the extra library that might be needed to you like facebook SDK or twitter sdk.
+		By default it contains phpmail which is a mailer api by PHPMailer org. and pagination to help in paginating your 
+		results by me.
+
+	4. models 
+		these are the classes that aid your controller in building page. If you feel like you cant do all the stuff in one class in controller then where to have the second class models are your friend you can create new model and include it in controller.
+		Models are general purpose classes which servers one or more controllers.
+
+	5. registry
+		this is where core or framework resides with all the api's don't play with them unless you know what you are doing.
+
+	6. views 
+		this is bank of you html, css, js files.
+
+
+	Api's : 
+
+		your api's are not directly available to you, you have to access them through registry object that you passed in your
+		controller earlier.
+
+		api's are categorised into different services or Objects.
+
+		categories of api's : mysqldb, template, urlprocessor, authenticate, errorlog, mail.
+
+		these above categories can be named he way you want to name them by editing framework.conf by default they are called as
+
+		'mysqldb'=>'db', 'template'=>'template', 'urlprocessor'=>'url', 'authenticate'=>'auth', 'errorlog'=>'log',
+		'mail'=>'mail'.
+
+		Once you have named them these api's will be available under the name you provided in framework.conf file.
+
+		registry 	 -> This contains api to have access to given below api's.
+		mysqldb 	 -> This contains api to connect to database and execute certain database querys.
+		template	 -> This contains api for template management to improve your html a little different way.
+		urlprocessor -> This contains api that provides you the url that is called.
+		authenticate -> This contains api for authentication of users (username password authentication). You must use registration
+						model for registration process.
+		errorlog	 -> This contains api for loggin errors to errorlog.txt.
+		mail 		 -> This contains api for mailing users.
+
+		These were core api's you also have access to pgination api's in lib and registration api's in models.
+
+		For detailed information on how to use these api's reffer Docs/api/ folder.
+		All docs use the default api name to show you examples of api's
+
+		A good plave to start with api's is registry api and move in order i have mentioned the api above.
+
+		All over the rgistry API all the APIS throws exception
+
+		the exception thrown class is storeException
+
+		so to catch the exceptions do this
+
+		try {
+			// your registry apis
+		} catch(storeException $e){
+			$registry->getObject('log')->logError($e->completeException());
+			// handle you exception here
+		}

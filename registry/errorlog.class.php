@@ -20,7 +20,8 @@ class errorlog {
 	}
 
 	public function writeError($string) {
-		$this->fwrite_stream($string);
+		$data = date(DATE_RFC2822);
+		$this->fwrite_stream($data." : '".$string);
 	}
 	
 	private function fwrite_stream($string) {

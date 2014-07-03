@@ -179,7 +179,7 @@ class Mysqldb {
      * @param int the number of rows to be removed
      * @return void
      */
-    public function deleteRecords( $table, $condition, $limit )
+    public function deleteRecords( $table, $condition, $limit = '' )
     {
     	$limit = ( $limit == '' ) ? '' : ' LIMIT ' . $limit;
     	$delete = "DELETE FROM {$table} WHERE {$condition} {$limit}";

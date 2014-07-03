@@ -1,0 +1,26 @@
+// phpFramework errorlog API Description
+==============================================
+
+this api is available to you once you have registry object passed as a parameter in your controller.
+
+errorlog is a class that allows log error in errorlog.txt.
+
+It has no public members it has public member function.
+
+Functions : 
+
+	1. logError : writes error array
+
+		this is mostly used to write exceptions thrown by the registry
+
+		try {
+			$registry->getObject('template')->parseOutput();
+		} catch(storeException $e) {
+			$registry->getObject('log')->logError($e->completeException());
+		}
+
+	2. writeError : writes error string
+
+		example :
+			$userid = 1;
+			$registry->getObject('log')->writeError('got some error while mailing user'.$userid);

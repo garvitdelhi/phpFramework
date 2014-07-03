@@ -1,0 +1,204 @@
+// phpFramework authenticate API Description
+==============================================
+
+this api is available to you once you have registry object passed as a parameter in your controller.
+
+authenticate is a class that checks if the user is logged in or not. Make sure you have used registration.php model for registration 
+process otherwise this will not work the way it should work you will have to work around with your own authentication methods.
+
+It has no public members it has public member function.
+
+
+Functions : 
+
+	1. checkForAuthentication : checks is the user is logged in or not and set the login status in class or if you have submitted a 
+								form it checks the form submited value all you have to do is call this function to the controller 
+								where you are submiting the form, it also sets a session for you, you don't have to do anything.
+								it also sets certain tags if present in your main virtual page.
+
+								the tags manipuated are  : 
+
+									if user is not logged in  : 
+										my_account : replaces it with "login"
+										my_account_link : replaces it with "login" that means it asumes that it is going to login 
+													controller.
+										my_logout : replaces it with "Register"
+										logout_link : replaces it with "login/signup"
+
+									if user is loggen in :
+										my_account : replaces it with "hi <name of user logged in>"
+										my_logout : replaces it with "logout"
+										my_account_link : replaces it with "<username of user>"
+										logout_link : replaces it with "<username of user>/logout"
+
+
+									but the form has to be of this type :
+
+										<form action='youraction' method="post">
+											<input type="text" name="username" placeholder="Username or email" required/>
+											<input type="password" name="password" placeholder="Password" required/>
+											<input type="submit" name='login' value="Login">
+										</form>
+
+										you can add classes according to your choice.
+
+		/**
+		 * checks is the user is logged in or not
+		 * @return void
+		 */
+
+		example :
+
+			$registry->getObject('auth')->checkForAuthentication();
+
+	2. isloggedIn : return true is user is logged in else false
+
+		/**
+		 * checks is the user is logged in or not
+		 * @return bool
+		 */
+
+		example :
+
+			$registry->getObject('auth')->checkForAuthentication();
+			if($registry->getObject('auth')->isloggedIn()) {
+				// user logged in
+			} else {
+				// user not lgged in
+			}
+
+	3. getError : returns the error becouse of which the user can't be logged in like username or password is wrong.
+
+		/**
+		 * returns error caused in authentication process
+		 * @return string
+		 */
+
+		example :
+
+			$error = $registry->getObject('auth')->getError();
+
+	4. logout : logouts the user it doesn't redirects the user you have to redirection on your on.
+
+		/**
+		 * logouts the user 
+		 * @return void
+		 */
+
+		example :
+
+			$registry->getObject('auth')->logout();
+
+	6. getUserWithID : if you have user's id which is a mysqldb column id then you can use this method to get all the details of use
+
+		/**
+		 * return the user with id
+		 * @return array
+		 */
+
+		 example :
+
+		 	$user = $registry->getObject('auth')->getUserWithID(60);
+
+		 	then $user will be like
+
+		 		Array (
+    				[id] => 60
+    				[username] => garvit
+    				[email] => garvit@garvit.com
+    				[active] => 1
+    				[admin] => 1
+    				[super_admin] => 1
+    				[is_social] => 0
+    				[banned] => 0
+    				[reset_key] => 
+    				[reset_expires] => 2014-05-14 16:57:28
+    				[deleted] => 0
+    				[session_user_uid] => sha256:1000:Z/uYev3ujQwLH5Mxk1JESe9IANNhEe82:VtupYHcyBDccHjLHFwhnJqxX82TuRVBy
+    				[pswd_reset_time] => 0
+    				[confirmed] => 0
+    				[confirm_code] => 
+    				[name] => Garvit Khatri
+    				[gender] => Male
+    				[dob] => 
+    				[pic_large] => 
+    				[pic_small] => 
+				);
+
+	6. authenticatePassword : if in your app you are asking the logged in user for password once again for some reason then this is 
+								the function to use it matches the password passwd with the password of the logged in user if 
+								password matches returns true else false;
+
+		/**
+		 * check if password is correct or not
+		 * @return bool
+		 */	
+
+		example :
+
+			$status = $registry->getObject('auth')->authenticatePassword($registry->getObject('db')->sanitizeData($_POST['password']));
+
+			if($status) {
+				// password correct
+			} else {
+				// password incorrect
+			}
+
+	5. getUserObject : returns the user object if the user is logged in else throws an exception
+
+		/**
+		 * returns the user object
+		 * @return object
+		 */
+
+		example :
+
+			$registry->getObject('auth')->checkForAuthentication();
+			if($registry->getObject('auth')->isloggedIn()) {
+				$userObject = $registry->getObject('auth')->getUserObject();
+			}
+
+		What all you can do with this object :
+
+			it has only one function available for you 
+
+			Funtions : 
+
+				getUser : returns the user details
+
+				/**
+		 		 * returns the user detals
+		 		 * @return array
+		 		 */
+
+		 		example :
+
+		 			$registry->getObject('auth')->checkForAuthentication();
+					if($registry->getObject('auth')->isloggedIn()) {
+						$user = $registry->getObject('auth')->getUserObject()->getUser();
+					}
+
+					the $user array is like :
+
+						Array (
+    						[id] => 60
+    						[username] => garvit
+    						[email] => garvit@garvit.com
+    						[active] => 1
+    						[admin] => 1
+    						[super_admin] => 1
+    						[is_social] => 0
+    						[banned] => 0
+    						[reset_key] => 
+    						[reset_expires] => 2014-05-14 16:57:28
+    						[deleted] => 0
+    						[session_user_uid] => sha256:1000:Z/uYev3ujQwLH5Mxk1JESe9IANNhEe82:VtupYHcyBDccHjLHFwhnJqxX82TuRVBy
+    						[pswd_reset_time] => 0
+    						[confirmed] => 0
+    						[confirm_code] => 
+    						[name] => Garvit Khatri
+    						[gender] => Male
+    						[dob] => 
+    						[pic_large] => 
+    						[pic_small] => 
+						);

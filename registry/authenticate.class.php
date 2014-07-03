@@ -28,7 +28,7 @@ class authenticate {
 			$this->registry->getObject('template')->getPage()->addTag('my_account_link','login');
 			$this->registry->getObject('template')->getPage()->addTag('my_logout','Register');
 			$this->registry->getObject('template')->getPage()->addTag('logout_link','login/signup');
-			$this->registry->getObject('template')->getPage()->addTag('pic','');
+			// $this->registry->getObject('template')->getPage()->addTag('pic','');
 		}catch(storeException $e) {
 			throw new storeException($e->getMessage(),$e->getCode());
 		}
@@ -41,12 +41,12 @@ class authenticate {
 					$this->registry->getObject('template')->getPage()->addTag('my_logout','Logout');
 					$this->registry->getObject('template')->getPage()->addTag('my_account_link',$this->user->getUser()['username']);
 					$this->registry->getObject('template')->getPage()->addTag('logout_link',$this->user->getUser()['username'].'/logout');
-					if($this->user->getUser()['pic_small']!='') {
+					/*if($this->user->getUser()['pic_small']!='') {
 						$pic = '<img src="{pic_link}" style="margin-top:-5px" width="40" height="40" alt="{my_account}" /> &nbsp;&nbsp;';
 						$this->registry->getObject('template')->getPage()->addTag('pic',$pic);
 						$this->registry->getObject('template')->getPage()->addTag('pic_link',$this->user->getUser()['pic_small']);
 						$this->error='';
-					}
+					}*/
 				}
 				else {
 					$this->error = 'Username Or Password Wrong';
@@ -67,12 +67,12 @@ class authenticate {
 					$this->registry->getObject('template')->getPage()->addTag('my_account_link','user');
 					$this->registry->getObject('template')->getPage()->addTag('my_account_link',$this->user->getUser()['username']);
 					$this->registry->getObject('template')->getPage()->addTag('logout_link',$this->user->getUser()['username'].'/logout');
-					if($this->user->getUser()['pic_small']!='') {
+					/*if($this->user->getUser()['pic_small']!='') {
 						$pic = '<img src="{pic_link}" style="margin-top:-5px" width="40" height="40" alt="{my_account}" /> &nbsp;&nbsp;';
 						$this->registry->getObject('template')->getPage()->addTag('pic',$pic);
 						$this->registry->getObject('template')->getPage()->addTag('pic_link',$this->user->getUser()['pic_small']);
 						$this->error='';
-					}
+					}*/
 				}
 				else {
 					unset($_SESSION['session_user_uid']);
@@ -125,7 +125,7 @@ class authenticate {
 		}    	    	
 	}
 	
-	public function postAuthenticate($u, $p) {
+	private function postAuthenticate($u, $p) {
 		$this->justProcessed = true;
 		if(file_exists(ROOT_DIRECTORY.'registry/user.class.php')) {
 			try {
@@ -168,6 +168,23 @@ class authenticate {
 		else {
 			throw new storeException('user.class.php can\'t be found.',404);
 		}
+	}
+	
+	public function getUserWithID($id) {
+		$query = "SELECT * FROM users WHERE id = '{$id}'";
+		$this->registry->getObject('db')->executeQuery($query);
+		$user = $this->registry->getObject('db')->getRows();
+		unset($user['password_hash']);
+		unset($user['password_salt']);
+		return $user;
+	}
+
+	public function authenticatePassword($password='')
+	{
+		if($this->getUserObject()->authenticatePassword($password)) {
+			return true;
+		}
+		return false;
 	}
 	
 	public function getUserObject() {

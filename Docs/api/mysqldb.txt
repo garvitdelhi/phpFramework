@@ -1,0 +1,209 @@
+// phpFramework mysqldb API Description
+==============================================
+
+this api is available to you once you have registry object passed as a parameter in your controller.
+
+mysqldb is a class that allows you access database and execute mysql query.
+
+It has no public members it has public member function.
+
+Functions : 
+
+	1. newConnection : this is used to create new database connection.
+
+		/**
+     	 * Create a new database connection
+	     * @param String database hostname
+    	 * @param String database username
+     	 * @param String database password
+     	 * @param String database we are using
+    	 * @return int the id of the new connection
+    	 */
+
+     	example :
+     	 	$connectionId = $registry->getObject('db')->newConnection( $configs['db_host_sn'], $configs['db_user_sn'], $configs['db_pass_sn'], $configs['db_name_sn']);
+
+    2. closeConnection : used to close the active database connection.
+
+    	/**
+     	 * Close the active connection
+    	 * @return void
+    	 */
+
+    	example :
+    		$registry->getObject('db')->closeConnection();
+
+    3. setActiveConnection : used to activate new connection by default the connection you mentioned in db.conf is active. use the key
+    						 returned by newConnection.
+
+    	/**
+    	 * Change which database connection is actively used for the next operation
+    	 * @param int the new connection id
+    	 * @return void
+     	 */
+
+     	example :
+    		$registry->getObject('db')->closeConnection($connectionId); 
+
+    4. cacheQuery : It executes the query and returns a cache id which can be used later on to get the results
+    	
+    	/**
+    	 * Store a query in the query cache for processing later
+    	 * @param String the query string
+    	 * @return the pointed to the query in the cache
+    	 */
+
+    	example : 
+    		$cacheId = $registry->getObject('db')->cacheQuery('SELECT * FROM users WHERE active = "1"');
+
+    5. numRowsFromCache : it returns the number of rows selected by the query executed by cacheQuery.
+
+    	/**
+     	 * Get the number of rows from the cache
+     	 * @param int the query cache pointer
+     	 * @return int the number of rows
+     	 */
+     	
+     	example : 
+     		$registry->getObject('db')->numRowsFromCache($cacheId);
+
+    6. resultsFromCache : it returns all the rows selected by the query executed by cacheQuery.
+
+    	/**
+     	 * Get the rows from a cached query
+     	 * @param int the query cache pointer
+     	 * @return array the row
+     	 */
+
+     	example : 
+     		while($row = $registry->getObject('db')->resultsFromCache($cacheId)) {
+     			// perform action on each row
+     		}
+
+    7. cacheData : Store some data in a cache for later
+
+    	/**
+     	 * Store some data in a cache for later
+     	 * @param array the data
+     	 * @return int the pointed to the array in the data cache
+     	 */
+
+     	example :
+     		$data = array('name'=>'garvit', 'username'=>'garvitdelhi');
+     		$cacheId = $registry->getObject('db')->cacheData($data);
+
+    8. dataFromCache : Get data from the data cache
+
+    	/**
+     	 * Get data from the data cache
+     	 * @param int data cache pointed
+     	 * @return array the data
+     	 */
+
+     	exapmle : 
+     		$data = $registry->getObject('db')->dataFromCache($cacheId);
+
+    9. deleteRecords : Delete records from the database
+
+    	/**
+     	 * Delete records from the database
+     	 * @param String the table to remove rows from
+     	 * @param String the condition for which rows are to be removed
+     	 * @param int the number of rows to be removed (optional)
+     	 * @return void
+     	 */
+
+     	example : 
+     		$registry->getObject('db')->deleteRecords('users', 'banned="1"', 5);
+
+    10. updateRecords : Update records in the database
+
+    	/**
+    	 * Update records in the database
+    	 * @param String the table
+    	 * @param array of changes field => value
+    	 * @param String the condition
+    	 * @return bool
+    	 */
+
+    	example : 
+    		$registry->getObject('db')->updateRecords('users', array('banned'=>0), "banned='1'");
+
+    11. insertRecords : 
+
+    	/**
+    	 * Insert records into the database
+    	 * @param String the database table
+     	 * @param array data to insert field => value
+    	 * @return bool
+    	 */
+
+    	example : 
+    		$data = array('name'=>'Garvit', 'username'=>'garvitdelhi', 'admin'=>1, 'email'=>'garvitdelhi@gmail.com');
+    		$registry->getObject('db')->insertRecords('users', $data);
+
+    12. lastInsertID : returns last row's inserted id
+
+    	/**
+    	 * returns last row's inserted id
+    	 * @return id
+    	 */
+
+    	example : 
+    		$id = $registry->getObject('db')->lastInsertID();
+
+    13. executeQuery : execute a sql query result must be cached after the query is executed as it only remembers the last query 
+    					executed so if you executed 5 query's at a time only last query's selected row will be available. If you
+    					want to have all the rows afterword use cacheQuery instead.
+
+    	/**
+     	 * Execute a query string
+     	 * @param String the query
+     	 * @return void
+     	 */
+
+     	examlpe : 
+     		$registry->getObject('db')->executeQuery('SELECT * FROM users WHERE active = "1"');
+
+   14. getRows : Get the rows from the most recently executed query using executeQuery
+
+   		/**
+    	 * Get the rows from the most recently executed query, excluding cached queries
+    	 * @return array 
+    	 */
+
+    	example : 
+    		while($row = $registry->getObject('db')->getRows()) {
+    			// process rows.
+    		}
+
+    15. numRows : Get the number of rows selected from the most recently executed query using executeQuery
+
+    	/**
+    	 * Get the number of rows selected from the most recently executed query using executeQuery
+    	 * @return ineger 
+    	 */
+
+    	example : 
+    		$number = $registry->getObject('db')->numRows();
+
+    16. affectedRows : Gets the number of affected rows from the previous query
+
+    	/**
+    	 * Gets the number of affected rows from the previous query
+    	 * @return int the number of affected rows
+    	 */
+
+    	example : 
+    		$number = $registry->getObject('db')->affectedRows();
+
+    17. sanitizeData : Sanitize data passed to it
+
+    	/**
+    	 * Sanitize data
+    	 * @param String the data to be sanitized
+    	 * @return String the sanitized data
+    	 */
+
+    	example :
+    		$username = $registry->getObject('db')->sanitizeData($_POST['username']);

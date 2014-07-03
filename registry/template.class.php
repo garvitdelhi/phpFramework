@@ -146,6 +146,13 @@
 		 						throw new storeException($e->getMessage(),$e->getCode(),$e);
 		 					}
 		 				}
+		 				elseif($data[0]=='DATA_CACHE') {
+		 					try {
+		 						$this->replaceDataCacheTags( $tag, $data[1], $key);
+		 					}catch(storeException $e) {
+		 						throw new storeException($e->getMessage(),$e->getCode(),$e);
+		 					}
+		 				}
 		 			}
 		 			else {
 		    				$newContent = str_replace( '{' . $tag . '}', $data, $this->page->getContent($key) );
@@ -173,7 +180,7 @@
 				{
 					$blockNew = $blockOld;
 				
-					/* Do we have APD tags?
+					// Do we have APD tags?
 					if( in_array( $tag, $apdkeys ) )
 					{
 						// YES we do!
@@ -200,7 +207,7 @@
 					        	} 
 					        }
 					}
-					else*/
+					else
 					{
 						// create a new block of content with the results replaced into it
 						foreach ($tags as $ntag => $data) 
@@ -267,6 +274,22 @@
 			}catch(storeException $e) {
 				throw new storeException($e->getMessage(),$e->getCode(),$e);
 			}
+		}
+
+		private function replaceDataCacheTags($tag, $cacheId, $keya = 'main') {
+			$blockOld = $this->page->getBlock( $tag, $keya );
+			$block = '';
+			$tags = $this->registry->getObject('db')->dataFromCache( $cacheId );		
+			foreach( $tags as $key => $tagsdata ) {
+				$blockNew = $blockOld;
+				foreach ($tagsdata as $taga => $data) {
+	        		$blockNew = str_replace("{" . $taga . "}", $data, $blockNew); 
+	        	}
+	        	$block .= $blockNew;
+			}
+			$pageContent = $this->page->getContent($keya);
+			$newContent = str_replace( '<!-- START '.$tag.' -->'.$blockOld.'<!-- END '.$tag.' -->', $block, $pageContent );
+			$this->page->setContent( $newContent, $keya );
 		}
 		
    

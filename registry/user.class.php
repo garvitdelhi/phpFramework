@@ -144,6 +144,22 @@ class user {
 			//generate new salt and password think later :(
 		}
 	}
+
+	public function authenticatePassword($password = '') {
+		$query = "SELECT * FROM users WHERE session_user_uid='{$this->session_user_uid}' AND admin = '1'";
+		$this->registry->getObject('db')->executeQuery( $query );
+		if( $this->registry->getObject('db')->numRows() == 1 ) {
+			$data = $this->registry->getObject('db')->getRows();
+			$salt = $data['password_salt'];
+			$password = sha1(md5($password));
+			$password = crypt($password,$salt);
+			if($this->registry->getObject('hash')->validate_password($password,$data['password_hash'])) {
+				return true;
+			}
+		}
+		
+		return false;
+	}
 	
 	public function isValid() {
 		return $this->isValid;

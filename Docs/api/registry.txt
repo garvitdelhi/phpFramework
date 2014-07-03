@@ -1,0 +1,102 @@
+// phpFramework Registry API Description
+==============================================
+
+this api is available to you once you have registry object passed as a parameter in your controller.
+
+Registry is a class that gives you access to you other api's all at once.
+
+It has no public members it has public member function.
+
+
+Functions : 
+
+	1. getObject : this is used to get the api you want to access.
+
+		/**
+     	 * Get an object from the registries store
+     	 * @param String $key the objects array key
+     	 * @return Object
+     	 */
+
+     	detailed information of api : 
+     		no of parameters : 1
+     	 	1st parameter : key of the api that you mentioned in framework.conf
+     	 	returned : Api Object.
+
+     	example :
+     	 	$urlApiObjet = $registry->getObject('url');
+
+	2. createAndStoreObject : this is to add a new set of api's to your registry object all core api's are already available in 
+								registry 
+		so don't use this function unless you adding your own api's in registry object.
+
+		/**
+     	 * Create a new object and store it in the registry
+     	 * @param String $object the object file prefix
+     	 * @param String $key pair for the object
+     	 * @return void
+     	 */
+
+		procedure of adding your own api : 
+			api must be in registry folder. Name of the api file must be of format <name>.class.php and the class inside this file
+			must be <name>
+
+		detailed information of api : 
+			no of parameters : 2
+			1st parameter : <name> of the api.
+			2nd parameter : a name with which you want to refer this api. for ex mysql db is accessed through work db by default.
+			returned : void
+
+		example : 
+			$registry->createAndStoreObject('<name>', '<petname>');
+
+    3. storeSetting : used for storing any setting you want to store in registry, this setting will be available in global scope of 
+    				  registry.
+
+    	/**
+     	 * Store Setting
+     	 * @param String $setting the setting data
+	   	 * @param String $key the key pair for the settings array
+     	 * @return void
+     	 */
+
+     	detailed information of api : 
+     		no of parameters : 2
+     	 	1st parameter : setting that you want to store can be an array or string or json data.
+     	 	2nd parameter : key which is going to be used when retriving the settings.
+     	 	returned : void
+
+     	example :
+     		$setting = array('value'=> 'Garvit', 'key'=>'username');
+     	 	$registry->storeSetting( $setting['value'], $setting['key'] );
+
+    4. getSetting : getting the setting that you save using storeSetting.
+
+    	/**
+     	 * Get a setting from the registries store
+     	 * @param String $key the settings array key
+     	 * @return String the setting data
+     	 */
+
+     	detailed information of api : 
+     		no of parameters : 1
+     	 	1st parameter : key which you mentioned in getSetting.
+     	 	returned : returns the setting saved.
+
+     	example :
+     		$registry->getSetting('username');
+
+     5. getClientIp : getting the client's Ip address
+
+     	/**
+     	 * Retrieving client's Ip address
+     	 * @param no
+     	 * @return String
+	     */
+
+	    detailed information of api : 
+     		no of parameters : 0
+     	 	returned : returns the client's Ip address.
+
+     	example :
+     		$ipAddress = $registry->getClientIp();

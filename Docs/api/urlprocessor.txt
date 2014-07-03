@@ -1,0 +1,64 @@
+// phpFramework urlprocessor API Description
+==============================================
+
+this api is available to you once you have registry object passed as a parameter in your controller.
+
+mysqldb is a class that allows you access database and execute mysql query.
+
+It has no public members it has public member function.
+
+Functions : 
+
+	1. getURLBits : returns the url bits
+
+		/** 
+		 * returns the url bits
+		 * @return array
+		 */
+
+		example :
+
+			$urlBits = $registry->getObject('url')->getURLBits();
+
+			let the url be http://yoursite.com/login/facebook
+
+			then the 
+
+			$urlBits = array(
+							[0]=>'login',
+							[1]=>'facebook'
+						);
+
+	2. getURLBit : return the url Bit you want
+
+		/** 
+		 * returns the url bit
+		 * @return string
+		 */
+
+		example :
+
+			$urlBit = $registry->getObject('url')->getURLBit(1);
+
+			let the url be http://yoursite.com/login/facebook
+
+			then
+
+			$urlBit = 'facebook';
+
+	3. getURLPath : returns the url path
+
+		/** 
+		 * returns the url path
+		 * @return string
+		 */
+
+		example :
+
+			$URLPath = $registry->getObject('url')->getURLPath();
+
+			let the url be http://yoursite.com/login/facebook
+
+			then
+
+			$URLPath = 'login/facebook';
