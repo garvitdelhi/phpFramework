@@ -8,7 +8,7 @@ This is registry based framework where you put your controllers and model to uti
 Documentation comming soon.
 
 
-// phpFramework Installation Instructions
+# phpFramework Installation Instructions
 
 This framework works on principal of MVC (Model View Controller). It is in development stage and is not fully stable and baked.
 Although it stable enough to built good interactive and powerfull webpps.
