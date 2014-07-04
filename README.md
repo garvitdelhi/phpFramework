@@ -9,10 +9,9 @@ Documentation comming soon.
 
 
 // phpFramework Installation Instructions
-==============================================
 
-# This framework works on principal of MVC (Model View Controller). It is in development stage and is not fully stable and baked.
-# Although it stable enough to built good interactive and powerfull webpps.
+This framework works on principal of MVC (Model View Controller). It is in development stage and is not fully stable and baked.
+Although it stable enough to built good interactive and powerfull webpps.
 
 Prerequisites: Apache 2.2+, MySQL 5+, PHP 5.3+, reWriteMod in apache Enabled.
 
