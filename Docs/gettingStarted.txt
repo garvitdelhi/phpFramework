@@ -21,12 +21,18 @@ Getting Started
 
 5. Use db.sql and import in your MySQL database which you created in last step to start your framework.
 
-6. DON'T Edit registry folder files and index.php
+6. Go to settings table in database and change the siteurl of your siteurl where you are installing the framework. If you installng 
+	it on localhost then type : http://localhost/
 
-7. Read structer.txt to readabout frameworks structure.
+7. Go to controllers table in database and insert controller's name and active status it has to be 1 if active and 0 otherwise
+	leave the priority as 0.
 
-8. Edit framwwork.conf file after reading structure.txt.
+8. DON'T Edit registry folder files and index.php
 
-9. After reading structure.txt you are ready to go and build your app.
+9. Read structer.txt to readabout frameworks structure.
 
-10. For information on API's go to api/ folder.
+10. Edit framwwork.conf file after reading structure.txt.
+
+11. After reading structure.txt you are ready to go and build your app.
+
+12. For information on API's go to api/ folder.

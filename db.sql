@@ -38,8 +38,7 @@ CREATE TABLE IF NOT EXISTS `controllers` (
 --
 
 INSERT INTO `controllers` (`ID`, `controller`, `active`, `priority`) VALUES
-(1, 'home', 1, '0'),
-(2, 'login', 1, '0');
+(1, 'home', 1, '0');
 
 -- --------------------------------------------------------
 

@@ -80,7 +80,8 @@ you directory after installation should look like :
 		this is where core or framework resides with all the api's don't play with them unless you know what you are doing.
 
 	6. views 
-		this is bank of you html, css, js files.
+		this is bank of you html, css, js files. All your html files must be in this folder as templating engine looks for files 
+		relatie to this folder.
 
 
 	Api's : 

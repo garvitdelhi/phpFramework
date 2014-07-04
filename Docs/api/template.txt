@@ -527,3 +527,16 @@ Functions :
 			$registry->getObject('template')->appendContent($content);
 
 			the above code will append content to main virtual file
+
+
+Now some of the things that template manegment does for you :
+
+	1. It autometical adds siteurl tag where ever present so it is recommended to use siteurl tag always in href and src tags like :
+
+			<img src="{siteurl}controllerName/otherthings" />
+
+		siteurl is populated as given in database, so make sure you add a forward slash while you name your site in database.
+
+		so it will look like 
+
+			<img src="http://yoursite.com/controllerName/otherthings" />

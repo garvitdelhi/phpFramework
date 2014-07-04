@@ -19,13 +19,11 @@ class Registry {
      * @param String $key pair for the object
      * @return void
      */
-    public function createAndStoreObject( $object, $key )
-    {
+    public function createAndStoreObject( $object, $key ) {
     	if(file_exists(ROOT_DIRECTORY.'registry/'.$object.'.class.php')) {
 	    	require_once( $object . '.class.php' );
     		$this->objects[ $key ] = new $object( $this );
-    	}
-    	else {
+    	} else {
     		throw new storeException("{$object} not found.", 0);
     	}
     }
@@ -35,14 +33,12 @@ class Registry {
      * @param String $key the objects array key
      * @return Object
      */
-    public function getObject( $key )
-    {
+    public function getObject( $key ) {
     	if(isset($this->objects[$key])) {
-		return $this->objects[ $key ];
-	}
-	else {
-		throw new storeException("{$key} object is now found",0);
-	}
+            return $this->objects[ $key ];
+        } else {
+            throw new storeException("{$key} object is now found",0);
+        }
     }
     
     /**
@@ -51,8 +47,7 @@ class Registry {
      * @param String $key the key pair for the settings array
      * @return void
      */
-    public function storeSetting( $setting, $key )
-    {
+    public function storeSetting( $setting, $key ) {
     	$this->settings[ $key ] = $setting;
     }
     
@@ -61,18 +56,15 @@ class Registry {
      * @param String $key the settings array key
      * @return String the setting data
      */
-    public function getSetting( $key )
-    {
-    	if(isset($this->settings[$key])) {
-		return $this->settings[ $key ];
-	}
-	else {
-		throw new storeException("{$key} key doesn't exists",0);
-	}
+    public function getSetting( $key ) {
+        if(isset($this->settings[$key])) {
+            return $this->settings[ $key ];
+        } else {
+            throw new storeException("{$key} key doesn't exists",0);
+        }
     }
     
-    public function errorPage( $heading, $content )
-    {
+    public function errorPage( $heading, $content ) {
     	$this->getObject('template')->buildFromTemplates('header.tpl.php', 'message.tpl.php', 'footer.tpl.php');
     	$this->getObject('template')->getPage()->addTag( 'heading', $heading );
     	$this->getObject('template')->getPage()->addTag( 'content', $content );
@@ -85,8 +77,7 @@ class Registry {
      * @param array $queryString any query string data
      * @return String
      */
-    public function buildURL( $urlBits, $queryString=array() )
-    {
+    public function buildURL( $urlBits, $queryString=array() ) {
     	return $this->getObject('url')->buildURL( $urlBits, $queryString, false );
     }
 
@@ -116,8 +107,7 @@ class Registry {
      * @param String $message the message itself
      * @return void
      */
-    public function redirectUser( $url, $heading, $message )
-    {
+    public function redirectUser( $url, $heading, $message ) {
     	$this->getObject('template')->buildFromTemplates('redirect.tpl.php');
     	$this->getObject('template')->getPage()->addTag( 'heading', $heading );
     	$this->getObject('template')->getPage()->addTag( 'message', $message );

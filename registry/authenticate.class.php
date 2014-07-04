@@ -211,8 +211,7 @@ class authenticate {
 		return $this->justProcessed;
 	}
 	
-	public  function logout() 
-	{
+	public  function logout() {
 		unset($_SESSION['session_user_uid']);
 		/*
 		require_once(ROOT_DIRECTORY.'lib/fbsdk/src/facebook.php');

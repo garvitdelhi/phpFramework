@@ -44,8 +44,7 @@ ss Mysqldb {
 	/**
 	 * Construct our database object
 	 */
-    public function __construct( Registry $registry ) 
-    {
+    public function __construct( Registry $registry ) {
     	$this->registry = $registry;	
     }
     
@@ -57,16 +56,13 @@ ss Mysqldb {
      * @param String database we are using
      * @return int the id of the new connection
      */
-    public function newConnection( $host, $user, $password, $database )
-    {
-    	try {
-    		$this->connections[] = new mysqli( $host, $user, $password, $database );
+    public function newConnection( $host, $user, $password, $database ) {
+        try {
+            $this->connections[] = new mysqli( $host, $user, $password, $database );
     		$connection_id = count( $this->connections )-1;
-    	}catch(mysqli_sql_exception $e) {
-		throw new storeException( $e->getMessage(), E_USER_ERROR,$e);
-	}	
-
-    	
+        } catch(mysqli_sql_exception $e) {
+            throw new storeException( $e->getMessage(), E_USER_ERROR,$e);
+        }
     	return $connection_id;
     }
     
@@ -74,12 +70,10 @@ ss Mysqldb {
      * Close the active connection
      * @return void
      */
-    public function closeConnection()
-    {
+    public function closeConnection() {
     	if(isset($this->connections[$this->activeConnection])) {
     		$this->connections[$this->activeConnection]->close();
-    	}
-    	else {
+    	} else {
     		throw new storeException('There is no active connection with mysql to be closed',404);
     	}
     }
@@ -89,8 +83,7 @@ ss Mysqldb {
      * @param int the new connection id
      * @return void
      */
-    public function setActiveConnection( int $new )
-    {
+    public function setActiveConnection( int $new ) {
     	$this->activeConnection = $new;
     }
     
@@ -99,15 +92,14 @@ ss Mysqldb {
      * @param String the query string
      * @return the pointed to the query in the cache
      */
-    public function cacheQuery( $queryStr )
-    {
+    public function cacheQuery( $queryStr ) {
     	try {
     		$result = $this->connections[$this->activeConnection]->query( $queryStr );
     		$this->queryCache[] = $result;
-    	}catch(mysqli_sql_exception $e) {
+    	} catch(mysqli_sql_exception $e) {
     		throw new storeException( $e->getMessage(), E_USER_ERROR,$e);
     	}
-	return count($this->queryCache)-1;
+        return count($this->queryCache)-1;
     }
     
     /**
@@ -115,14 +107,12 @@ ss Mysqldb {
      * @param int the query cache pointer
      * @return int the number of rows
      */
-    public function numRowsFromCache( $cache_id )
-    {
+    public function numRowsFromCache( $cache_id ) {
     	if(isset($this->queryCache[$cache_id])) {
 	    	return $this->queryCache[$cache_id]->num_rows;	
-	}
-	else {
-		throw new storeException("cannot find {$cache_id}");
-	}
+        } else {
+            throw new storeException("cannot find {$cache_id}");
+        }
     }
     
     /**
@@ -130,14 +120,12 @@ ss Mysqldb {
      * @param int the query cache pointer
      * @return array the row
      */
-    public function resultsFromCache( $cache_id )
-    {
+    public function resultsFromCache( $cache_id ) {
     	if(isset($this->queryCache[$cache_id])) {
     		return $this->queryCache[$cache_id]->fetch_array(MYSQLI_ASSOC);
-    	}
-        else {
+    	} else {
 		  throw new storeException("cannot find {$cache_id}");
-	   }
+        }
     }
     
     /**
@@ -145,8 +133,7 @@ ss Mysqldb {
      * @param array the data
      * @return int the pointed to the array in the data cache
      */
-    public function cacheData( $data )
-    {
+    public function cacheData( $data ) {
     	$this->dataCache[] = $data;
     	return count( $this->dataCache )-1;
     }
@@ -156,14 +143,12 @@ ss Mysqldb {
      * @param int data cache pointed
      * @return array the data
      */
-    public function dataFromCache( $cache_id )
-    {
+    public function dataFromCache( $cache_id ) {
     	if(isset($this->queryCache[$cache_id])) {
     		return $this->dataCache[$cache_id];
-    	}
-    	else {
-		throw new storeException("cannot find {$cache_id}");
-	}
+    	} else {
+            throw new storeException("cannot find {$cache_id}");
+        }
     }
     
     /**
@@ -173,13 +158,12 @@ ss Mysqldb {
      * @param int the number of rows to be removed
      * @return void
      */
-    public function deleteRecords( $table, $condition, $limit = '' )
-    {
+    public function deleteRecords( $table, $condition, $limit = '' ) {
     	$limit = ( $limit == '' ) ? '' : ' LIMIT ' . $limit;
     	$delete = "DELETE FROM {$table} WHERE {$condition} {$limit}";
     	try {
     		$this->executeQuery( $delete );
-    	}catch(storeException $e) {
+    	} catch(storeException $e) {
     		throw new storeException($e->getMessage(),$e->getCode(),$e);
     	}
     }
@@ -191,23 +175,20 @@ ss Mysqldb {
      * @param String the condition
      * @return bool
      */
-    public function updateRecords( $table, $changes, $condition )
-    {
+    public function updateRecords( $table, $changes, $condition ) {
     	$update = "UPDATE " . $table . " SET ";
-    	foreach( $changes as $field => $value )
-    	{
+    	foreach( $changes as $field => $value ) {
     		$update .= "`" . $field . "`='{$value}',";
     	}
     	   	
     	// remove our trailing ,
     	$update = substr($update, 0, -1);
-    	if( $condition != '' )
-    	{
+    	if( $condition != '' ) {
     		$update .= "WHERE " . $condition;
     	}
     	try {
     		$this->executeQuery( $update );
-    	}catch(storeException $e) {
+    	} catch(storeException $e) {
     		throw new storeException($e->getMessage(),$e->getCode());
     	}
     	
@@ -221,15 +202,13 @@ ss Mysqldb {
      * @param array data to insert field => value
      * @return bool
      */
-    public function insertRecords( $table, $data )
-    {
+    public function insertRecords( $table, $data ) {
     	// setup some variables for fields and values
     	$fields  = "";
 		$values = "";
 		
 		// populate them
-		foreach ($data as $f => $v)
-		{
+		foreach ($data as $f => $v) {
 			
 			$fields  .= "`$f`,";
 			$values .= ( is_numeric( $v ) && ( intval( $v ) == $v ) ) ? $v."," : "'$v',";
@@ -245,14 +224,13 @@ ss Mysqldb {
 		//echo $insert;
 		try {
 			$this->executeQuery( $insert );
-		}catch(storeException $e) {
-    			throw new storeException($e->getMessage(),$e->getCode(),$e);
-    		}
+		} catch(storeException $e) {
+    		throw new storeException($e->getMessage(),$e->getCode(),$e);
+    	}
 		return true;
     }
     
-    public function lastInsertID()
-    {
+    public function lastInsertID() {
 	    return $this->connections[ $this->activeConnection]->insert_id;
     }
     
@@ -261,12 +239,11 @@ ss Mysqldb {
      * @param String the query
      * @return void
      */
-    public function executeQuery( $queryStr )
-    {
+    public function executeQuery( $queryStr ) {
     	try {
     		$result = $this->connections[$this->activeConnection]->query( $queryStr );
     		$this->last = $result;
-    	}catch(mysqli_sql_exception $e) {
+    	} catch(mysqli_sql_exception $e) {
     		throw new storeException( $e->getMessage(), E_USER_ERROR, $e);
     	}	
     }
@@ -275,22 +252,18 @@ ss Mysqldb {
      * Get the rows from the most recently executed query, excluding cached queries
      * @return array 
      */
-    public function getRows()
-    {
+    public function getRows() {
     	if($this->last!=NULL) {
     		return $this->last->fetch_array(MYSQLI_ASSOC);
-    	}
-    	else {
+    	} else {
     		throw new storeException('No last executed query found', 0);
     	}
     }
     
-    public function numRows()
-    {
-	if($this->last!=NULL) {
-	    return $this->last->num_rows;
-    	}
-    	else {
+    public function numRows() {
+        if($this->last!=NULL) {
+            return $this->last->num_rows;
+        } else {
     		throw new storeException('No last executed query found', 404);
     	}
     }
@@ -299,12 +272,10 @@ ss Mysqldb {
      * Gets the number of affected rows from the previous query
      * @return int the number of affected rows
      */
-    public function affectedRows()
-    {
+    public function affectedRows() {
     	if($this->last!=NULL) {
     		return $this->last->affected_rows;
-    	}
-    	else {
+    	} else {
     		throw new storeException('No last executed query found');
     	}
     }
@@ -314,21 +285,16 @@ ss Mysqldb {
      * @param String the data to be sanitized
      * @return String the sanitized data
      */
-    public function sanitizeData( $value )
-    {
+    public function sanitizeData( $value ) {
     	// Stripslashes 
-		if ( get_magic_quotes_gpc() ) 
-		{ 
+		if ( get_magic_quotes_gpc() ) { 
 			$value = stripslashes ( $value ); 
 		} 
 		
 		// Quote value
-		if ( version_compare( phpversion(), "4.3.0" ) == "-1" ) 
-		{
+		if ( version_compare( phpversion(), "4.3.0" ) == "-1" ) {
 			$value = $this->connections[$this->activeConnection]->escape_string( $value );
-		} 
-		else 
-		{
+		} else {
 			$value = $this->connections[$this->activeConnection]->real_escape_string( $value );
 		}
     	return $value;
@@ -338,10 +304,8 @@ ss Mysqldb {
      * Deconstruct the object
      * close all of the database connections
      */
-    public function __deconstruct()
-    {
-    	foreach( $this->connections as $connection )
-    	{
+    public function __deconstruct() {
+    	foreach( $this->connections as $connection ) {
     		$connection->close();
     	}
     }

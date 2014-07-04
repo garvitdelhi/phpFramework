@@ -41,10 +41,9 @@
 					if(file_exists($file)) {
 						$content .= file_get_contents($file);
 					}
-					$this->page->setContent($content,$key);
 				}
-			}
-			else {
+				$this->page->setContent($content,$key);
+			} else {
 				throw new storeException('No arguments found',404);
 			}
 		}
@@ -57,28 +56,26 @@
 		 * @return - void
 		 */
 		 
-		 public function addTemplateBit($tag, $file,$key = 'main' , $replacement=NULL) {
+		public function addTemplateBit($tag, $file,$key = 'main' , $replacement=NULL) {
 		 	try {
 		 		if(strpos($file, 'views/') === false) {
 		 			$file = ROOT_DIRECTORY.'views/'.$file;
 			 	}
 			 	if(file_exists($file)) {
 			 		$this->page->addTemplateBit($tag, $file, $key , $replacement);
+			 	} else {
+			 		throw new storeException("{$file} can't be found", 404);
 			 	}
-			 	else {
-			 		throw new storeException("$file can't be found", 404);
-			 		
-			 	}
-			 }catch(storeException $e) {
+			 } catch(storeException $e) {
 			 	throw new storeException($e->getMessage(),$e->getCode(),$e);
 			 }
 		 }
 		 
-		 public function createEmptyFile($key = 'main') {
-		 	$this->page->setContent('', $key);
-		 }
+		public function createEmptyFile($key = 'main') {
+			$this->page->setContent('', $key);
+		}
 
-		 public function appendContent($content, $key = 'main') {
+		public function appendContent($content, $key = 'main') {
 		 	try {
 		 		$newContent = $this->page->getContent($key);
 		 		$newContent .= $content;
@@ -86,12 +83,12 @@
 		 	} catch(storeException $e) {
 		 		throw new storeException($e->getMessage(),$e->getCode(),$e);
 		 	}
-		 }
+		}
 		 
 		 /*
 		  * replace the bits that in conent that were added earlier
 		  */
-		 private function replaceBits($key = 'main') {
+		private function replaceBits($key = 'main') {
 		 	$bits = $this->page->getBits($key);
 		 	if($bits != NULL) {
 			 	foreach($bits as $tag=>$tagValue) {
@@ -99,8 +96,7 @@
 			 		$fileContent = '';
 			 		if(file_exists($file)) {
 			 			$fileContent = file_get_contents($file);
-			 		}
-			 		else {
+			 		} else {
 			 			throw new storeException("{$file} can't be found.",404);
 			 		}
 			 		$replacements = $tagValue['replacements'];
@@ -113,19 +109,18 @@
 				 	$newContent = str_replace('{'.$tag.'}', $fileContent, $this->page->getContent($key));
 				 	try {
 				 		$this->page->setContent($newContent,$key);
-				 	}catch(storeException $e) {
+				 	} catch(storeException $e) {
 				 		throw new storeException($e->getMessage(),$e->getCode,$e);
 				 	}
 			 	}
 			 }
-		 }
+		}
 		 
-		 private function replaceTags($pp = false, $key = 'main') {
+		private function replaceTags($pp = false, $key = 'main') {
 		 	$tags = NULL;
 		 	if($pp == false) {
 		 		$tags = $this->page->getTags($key);
-		 	}
-		 	else {
+		 	} else {
 		 		$tags = $this->page->getPPTags($key);
 		 	}
 		 	
@@ -138,29 +133,26 @@
 		 					}catch(storeException $e) {
 		 						throw new storeException($e->getMessage(),$e->getCode(),$e);
 		 					}
-		 				}
-		 				elseif($data[0]=='DATA') {
+		 				} elseif($data[0]=='DATA') {
 		 					try {
 		 						$this->replaceDataTags( $tag, $data[1], $key);
 		 					}catch(storeException $e) {
 		 						throw new storeException($e->getMessage(),$e->getCode(),$e);
 		 					}
-		 				}
-		 				elseif($data[0]=='DATA_CACHE') {
+		 				} elseif($data[0]=='DATA_CACHE') {
 		 					try {
 		 						$this->replaceDataCacheTags( $tag, $data[1], $key);
 		 					}catch(storeException $e) {
 		 						throw new storeException($e->getMessage(),$e->getCode(),$e);
 		 					}
 		 				}
-		 			}
-		 			else {
+		 			} else {
 		    				$newContent = str_replace( '{' . $tag . '}', $data, $this->page->getContent($key) );
 		    				$this->page->setContent( $newContent, $key );
 		 			}
-		 		}
-		 	}
-		 }
+				}
+			}
+		}
 		 
 		/**
      		 * Replace content on the page with data from the database
@@ -168,62 +160,50 @@
      		 * @param int $cacheId the queries ID in the query cache
      		 * @return void
      		 */
-    		private function replaceDBTags( $tag, $cacheId, $key = 'main' )
-		{
-	    		$block = '';
+    	private function replaceDBTags( $tag, $cacheId, $key = 'main' ) {
+			$block = '';
 			$blockOld = $this->page->getBlock( $tag, $key );
 			//$apd = $this->page->getAdditionalParsingData($key);
 			//$apdkeys = array_keys( $apd );
 			// foreach record relating to the query...
 			try {
-				while ($tags = $this->registry->getObject('db')->resultsFromCache( $cacheId ) )
-				{
+				while ($tags = $this->registry->getObject('db')->resultsFromCache( $cacheId ) ) {
 					$blockNew = $blockOld;
 				
 					// Do we have APD tags?
-					if( in_array( $tag, $apdkeys ) )
-					{
+					if( in_array( $tag, $apdkeys ) ) {
 						// YES we do!
-				        	foreach ($tags as $ntag => $data) 
-				       		{
-				        		$blockNew = str_replace("{" . $ntag . "}", $data, $blockNew);
-					        	// Is this tag the one with extra parsing to be done?
-					        	if( array_key_exists( $ntag, $apd[ $tag ] ) )
-					        	{
-						        	// YES it is
-						        	$extra = $apd[ $tag ][$ntag];
-						        	// does the tag equal the condition?
-						        	if( $data == $extra['condition'] )
-						        	{
-						        		
-							        	// Yep! Replace the extratag with the data
-							        	$blockNew = str_replace("{" . $extra['tag'] . "}", $extra['data'], 	$blockNew);
-						        	}
-						        	else
-					        		{
-							        	// remove the extra tag - it aint used!
-							        	$blockNew = str_replace("{" . $extra['tag'] . "}", '', $blockNew);
-						        	}
-					        	} 
-					        }
-					}
-					else
-					{
+				        foreach ($tags as $ntag => $data) {
+				        	$blockNew = str_replace("{" . $ntag . "}", $data, $blockNew);
+					       	// Is this tag the one with extra parsing to be done?
+					       	if( array_key_exists( $ntag, $apd[ $tag ] ) ) {
+						       	// YES it is
+						       	$extra = $apd[ $tag ][$ntag];
+						       	// does the tag equal the condition?
+						       	if( $data == $extra['condition'] ) {
+						        	// Yep! Replace the extratag with the data
+						        	$blockNew = str_replace("{" . $extra['tag'] . "}", $extra['data'], 	$blockNew);
+						       	} else {
+						        	// remove the extra tag - it aint used!
+						        	$blockNew = str_replace("{" . $extra['tag'] . "}", '', $blockNew);
+						       	}
+					       	} 
+						}
+					} else {
 						// create a new block of content with the results replaced into it
-						foreach ($tags as $ntag => $data) 
-					       	{
-					        	$blockNew = str_replace("{" . $ntag . "}", $data, $blockNew); 
-					        }
+						foreach ($tags as $ntag => $data) {
+					        $blockNew = str_replace("{" . $ntag . "}", $data, $blockNew); 
+						}
 					}
 					
-			        	$block .= $blockNew;
+			        $block .= $blockNew;
 				}
 				$pageContent = $this->page->getContent($key);
 				// remove the seperator in the template, cleaner HTML
 				$newContent = str_replace( '<!-- START ' . $tag . ' -->' . $blockOld . '<!-- END ' . $tag . ' -->', $block, $pageContent );
 				// update the page content
 				$this->page->setContent( $newContent, $key );
-			}catch(storeException $e) {
+			} catch(storeException $e) {
 				throw new storeException($e->getMessage(),$e->getCode(),$e);
 			}
 		}
@@ -254,19 +234,16 @@
      		 * @param int $cacheId the datas ID in the data cache
      		 * @return void
      		 */
-	    private function replaceDataTags( $tag, $data, $keya = 'main' )
-    	{	
+	    private function replaceDataTags( $tag, $data, $keya = 'main' ) {	
 			try {
 	    		$blockOld = $this->page->getBlock( $tag, $keya );
 				$block = '';
-				foreach( $data as $key => $tagsdata )
-				{
+				foreach( $data as $key => $tagsdata ) {
 					$blockNew = $blockOld;
-					foreach ($tagsdata as $taga => $data) 
-				       	{
-			        		$blockNew = str_replace("{" . $taga . "}", $data, $blockNew); 
-			        	}
-			        	$block .= $blockNew;
+					foreach ($tagsdata as $taga => $data) {
+			        	$blockNew = str_replace("{" . $taga . "}", $data, $blockNew); 
+			        }
+					$block .= $blockNew;
 				}				
 				$pageContent = $this->page->getContent($keya);
 				$newContent = str_replace( '<!-- START '.$tag.' -->'.$blockOld.'<!-- END '.$tag.' -->', $block, $pageContent );
@@ -297,65 +274,59 @@
      		 * Get the page object
      		 * @return Object 
      		 */
-		public function getPage()
-    		{
-    			if($this->page!=NULL) {
+		public function getPage() {
+    		if($this->page!=NULL) {
 				return $this->page;
 			}
 			else {
 				throw new storeException('Page doesn\'t exists.',404);
 			}
-    		}
+    	}
     		
-    		/* Convert an array of data into some tags
-     		 * @param array the data 
-     		 * @param string a prefix which is added to field name to create the tag name
-     		 * @return void
-     		 */
-    		public function dataToTags( $data, $prefix, $key )
-    		{
-    			if(isset($data) && isset($prefix)) {
-	    			foreach( $data as $key => $content )
-					{
-		    			$this->page->addTag( $prefix.$key, $content, $key);
-		    		}
-				}
-				else {
-					throw new storeException('NULLpointerException $data and $prefix can\'t be NULL.',0);
-				}
-    		}
-    
-    		/**
-     		 * Take the title we set in the page object, and insert them into the view
-     		 */
-    		public function parseTitle()
-    		{
-	    		$newContent = str_replace('<title>', '<title>'. $this->page->getTitle(), $this->page->getContent() );
-	    		$this->page->setContent( $newContent );
-    		}
-    
-    		/**
-     		 * Parse the page object into some output
-     		 * @return void
-     		 */
-    		public function parseOutput($key = 'main')
-    		{
-    			try {
-	    			$this->replaceBits($key);
-					$this->replaceTags(false, $key);
-	    			$this->replaceBits($key);
-	    			$this->replaceTags(true, $key);
-	    			$this->replaceHTMLTags($key);
-		    		//$this->parseTitle();
-		    	}catch(storeException $e) {
-		    		throw new storeException($e->getMessage(),$e->getCode(),$e);
+    	/* Convert an array of data into some tags
+     	 * @param array the data 
+     	 * @param string a prefix which is added to field name to create the tag name
+     	 * @return void
+     	 */
+    	public function dataToTags( $data, $prefix, $key ) {
+    		if(isset($data) && isset($prefix)) {
+	    		foreach( $data as $key => $content ) {
+		    		$this->page->addTag( $prefix.$key, $content, $key);
 		    	}
-	    	}
+			} else {
+				throw new storeException('NULLpointerException $data and $prefix can\'t be NULL.',0);
+			}
+    	}
+    
+    	/**
+     	 * Take the title we set in the page object, and insert them into the view
+     	 */
+    	public function parseTitle() {
+	    	$newContent = str_replace('<title>', '<title>'. $this->page->getTitle(), $this->page->getContent() );
+	    	$this->page->setContent( $newContent );
+    	}
+    
+    	/**
+     	 * Parse the page object into some output
+     	 * @return void
+     	 */
+    	public function parseOutput($key = 'main') {
+    		try {
+	    		$this->replaceBits($key);
+				$this->replaceTags(false, $key);
+	    		$this->replaceBits($key);
+	    		$this->replaceTags(true, $key);
+	    		$this->replaceHTMLTags($key);
+		    	//$this->parseTitle();
+		    }catch(storeException $e) {
+		    	throw new storeException($e->getMessage(),$e->getCode(),$e);
+		    }
+	    }
 
-	    	public function printContent($key = 'main') {
-	    		$this->parseOutput($key);
-	    		return $this->page->getContentToPrint($key);
-	    	}
+	    public function printContent($key = 'main') {
+	    	$this->parseOutput($key);
+	    	return $this->page->getContentToPrint($key);
+	    }
 	}
 
 ?>

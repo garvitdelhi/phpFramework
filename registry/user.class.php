@@ -40,8 +40,7 @@ class user {
 						unset($data['password_salt']);
 						if($data['deleted']!=0) {
 							$this->deletedUser();
-						}
-						else {
+						} else {
 							$this->data = $data;
 							$this->username = $data['username'];
 							$this->isActive = $data['active'];
@@ -57,8 +56,7 @@ class user {
 			}catch(storeException $e) {
 				throw new storeException($e->getMessage(),$e->getCode(0));
 			}
-		}
-		elseif($this->session_user_uid) {
+		} elseif($this->session_user_uid) {
 			try {
 				$query = "SELECT * FROM users WHERE session_user_uid='{$this->session_user_uid}'";
 				$this->registry->getObject('db')->executeQuery( $query );
@@ -69,8 +67,7 @@ class user {
 					unset($data['password_salt']);
 					if($data['deleted']) {
 						$this->deletedUser();
-					}
-					else {
+					} else {
 						$this->data = $data;
 						$this->username = $data['username'];
 						$this->password = 0;
@@ -81,8 +78,7 @@ class user {
 						$this->pwd_reset_key = $data['reset_key'];
 						$this->isValid = true;
 					}
-				}
-				else {
+				} else {
 					$this->password = 0;
 					$this->password = 0;
 					$this->session_user_uid = 0;
@@ -114,8 +110,7 @@ class user {
 					$this->session_user_uid = $data['session_user_uid'];
 					$this->password = 0;
 					return true;
-				}
-				else {
+				} else {
 					$this->password = 0;
 					$this->password = 0;
 					$this->session_user_uid = 0;
@@ -138,8 +133,7 @@ class user {
 	private function resetPassword() {
 		$query = "SELECT * FROM users WHERE ID='{$this->session_user_uid}'";
 		$this->registry->getObject('db')->executeQuery( $query );
-		if( $this->registry->getObject('db')->numRows() == 1 )
-		{
+		if( $this->registry->getObject('db')->numRows() == 1 ) {
 			$data = $this->registry->getObject('db')->getRows();
 			//generate new salt and password think later :(
 		}

@@ -82,8 +82,7 @@
 		public function addTemplateBit($tag, $file, $key = 'main' , $replacement=NULL) {
 			if(isset($tag)&&isset($file)) {
 				$this->bits[$key][$tag] = array('file'=>$file, 'replacements'=>$replacement);
-			}
-			else {
+			} else {
 				throw new storeException('NULLpointerException $tag and $file can\'t be NULL.',0);
 			}
 		}
@@ -108,8 +107,7 @@
     	public function addTag( $tag, $data , $key='main') {
 			if(isset($tag)&&isset($data)) {
 	    		$this->tags[$key][$tag] = $data;
-	    	}
-	    	else {
+	    	} else {
 				throw new storeException('NULLpointerException $key and $data can\'t be NULL.',0);
 			}
     	}
